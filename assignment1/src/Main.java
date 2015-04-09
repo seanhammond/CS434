@@ -7,13 +7,35 @@ import java.util.List;
 
 
 public class Main {
+	
+	
 	public static void main(String args[]){
+		
+		//Parse housing_train.txt into List
+		Path pathTrain = Paths.get(System.getProperty("user.dir")+"/src/housing_train.txt"); //Get path
+		Path pathTest = Paths.get(System.getProperty("user.dir")+"/src/housing_test.txt"); //Get path
+		
+		List<ArrayList<Double>> dataset = loadFile(pathTrain);
+		
+		//System.out.println(dataset);
+		
+		BostonSuburbs suburbs = new BostonSuburbs();
+		
+		System.out.println("SSE:");
+		for(float i = 0; i < 1; i+=0.01){
+			double sse = suburbs.train(dataset, i);
+			System.out.println(i+ ", " + sse);
+		}
+	}
+	
+	
+	
+	public static List<ArrayList<Double>> loadFile(Path path){
 		
 		List<ArrayList<Double>> dataset = new ArrayList<ArrayList<Double>>();
 		
-		//Parse housing_train.txt into List
 		try {
-			Path path = Paths.get(System.getProperty("user.dir")+"/src/housing_train.txt"); //Get path
+			
 			Object[] lines = Files.lines(path).toArray();
 			
 			for(Object line : lines){
@@ -40,13 +62,9 @@ public class Main {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			return;
 		}
 		
-		//System.out.println(dataset);
-		
-		BostonSuburbs suburbs = new BostonSuburbs();
-		
-		suburbs.train(dataset);
+		return dataset;
+	
 	}
 }

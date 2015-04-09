@@ -4,9 +4,10 @@ import java.util.List;
 import Jama.Matrix;
 
 public class BostonSuburbs {
-	public void train(List<ArrayList<Double>> dataset){
+	public double train(List<ArrayList<Double>> dataset, double sigma){
 		//Linear Regression algorithm here
 		Matrix x,y,w;
+		
 		
 		//Get X Matrices nx13 // The first 13 elements are the X matrix
 		//Get Y Matrices nx1 // The 14th element of the dataset is are the Y values
@@ -38,20 +39,27 @@ public class BostonSuburbs {
 		y = new Matrix(yMatrix, 1); //1xn
 		y = y.transpose(); //nx1
 		
-		//w = (XT * X)^−1 * XT * Y
-		w = (x.transpose().times(x)).inverse().times(x.transpose()).times(y); //14x1 //Learned weight vector
+		Matrix I = (x.transpose().times(x));
+		I = Matrix.identity(I.getRowDimension(), I.getColumnDimension());
+		
+		//w = (XT * X + sigmaI)^−1 * XT * Y
+		w = (x.transpose().times(x).plus(I.times(sigma))).inverse().times(x.transpose()).times(y); //14x1 //Learned weight vector
 		
 		//Print dimensions for debugging
-		System.out.println("X is " + x.getRowDimension() + "x" + x.getColumnDimension());
-		System.out.println("Y is " + y.getRowDimension() + "x" + y.getColumnDimension());
-		System.out.println("W is " + w.getRowDimension() + "x" + w.getColumnDimension());
+		//System.out.println("X is " + x.getRowDimension() + "x" + x.getColumnDimension());
+		//System.out.println("Y is " + y.getRowDimension() + "x" + y.getColumnDimension());
+		//System.out.println("W is " + w.getRowDimension() + "x" + w.getColumnDimension());
 		
+		//Print Matrices
 		//x.print(0, 5);
 		//y.print(1, 2);
 		//w.print(0, 10);
 
-		//TODO Compute SSE vlaue
+		//Compute SSE vlaue
+		// (y - Xw)T * (y - Xw)
+		Matrix sse = ((y.minus(x.times(w))).transpose()).times(y.minus(x.times(w))); //1x1
 		
+		return sse.get(0, 0);
 		
 	}
 	
