@@ -16,6 +16,9 @@ public class BostonSuburbs {
 		for(ArrayList<Double> e : dataset){
 			//e is a list of 14 elements
 			ArrayList<Double> firstSet = new ArrayList<Double>();
+			
+			firstSet.add(1.0); //Dummy Variable
+			
 			for(int i = 0; i < e.size()-1; i++){
 				firstSet.add(e.get(i));
 			}
@@ -31,20 +34,23 @@ public class BostonSuburbs {
 		
 		double[] yMatrix = toDoubleArray(yElements);
 		
-		x = new Matrix(xMatrix); //nx13
+		x = new Matrix(xMatrix); //nx14
 		y = new Matrix(yMatrix, 1); //1xn
 		y = y.transpose(); //nx1
-		w = new Matrix(dataset.size(), 1); //nx1
 		
-		//x.print(0, 5);
-		//y.print(0, 2);
-		//w.print(0, 2);
+		//w = (XT * X)^−1 * XT * Y
+		w = (x.transpose().times(x)).inverse().times(x.transpose()).times(y); //14x1 //Learned weight vector
 		
+		//Print dimensions for debugging
 		System.out.println("X is " + x.getRowDimension() + "x" + x.getColumnDimension());
 		System.out.println("Y is " + y.getRowDimension() + "x" + y.getColumnDimension());
 		System.out.println("W is " + w.getRowDimension() + "x" + w.getColumnDimension());
 		
-		
+		//x.print(0, 5);
+		//y.print(1, 2);
+		//w.print(0, 10);
+
+		//TODO Compute SSE vlaue
 		
 		
 	}
