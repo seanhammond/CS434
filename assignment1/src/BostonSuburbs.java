@@ -4,9 +4,12 @@ import java.util.List;
 import Jama.Matrix;
 
 public class BostonSuburbs {
-	public double train(List<ArrayList<Double>> dataset, double sigma){
+	
+	private Matrix w;
+	
+	public void train(List<ArrayList<Double>> dataset, double sigma){
 		//Linear Regression algorithm here
-		Matrix x,y,w;
+		Matrix x,y;
 		
 		
 		//Get X Matrices nx13 // The first 13 elements are the X matrix
@@ -55,13 +58,48 @@ public class BostonSuburbs {
 		//y.print(1, 2);
 		//w.print(0, 10);
 
+	}
+	
+	public double evaluateSSE(List<ArrayList<Double>> dataset){
+		
+		Matrix x,y;
+		
+		ArrayList<ArrayList<Double>> xElements = new ArrayList<ArrayList<Double>>();
+		ArrayList<Double> yElements = new ArrayList<Double>();
+		
+		for(ArrayList<Double> e : dataset){
+			//e is a list of 14 elements
+			ArrayList<Double> firstSet = new ArrayList<Double>();
+			
+			firstSet.add(1.0); //Dummy Variable
+			
+			for(int i = 0; i < e.size()-1; i++){
+				firstSet.add(e.get(i));
+			}
+			xElements.add(firstSet);
+			yElements.add(e.get(e.size()-1));
+		}
+		
+		//Translate Double into double
+		double[][] xMatrix = new double[xElements.size()][xElements.get(0).size()];
+		for(int i = 0; i < xElements.size(); i++){
+			xMatrix[i] = toDoubleArray(xElements.get(i));
+		}
+		
+		double[] yMatrix = toDoubleArray(yElements);
+		
+		x = new Matrix(xMatrix); //nx14
+		y = new Matrix(yMatrix, 1); //1xn
+		y = y.transpose(); //nx1
+		
 		//Compute SSE vlaue
 		// (y - Xw)T * (y - Xw)
 		Matrix sse = ((y.minus(x.times(w))).transpose()).times(y.minus(x.times(w))); //1x1
-		
+						
 		return sse.get(0, 0);
 		
 	}
+	
 	
 	private double[] toDoubleArray(List<Double> list){
 		double[] array = new double[list.size()];

@@ -16,6 +16,7 @@ public class Main {
 		Path pathTest = Paths.get(System.getProperty("user.dir")+"/src/housing_test.txt"); //Get path
 		
 		List<ArrayList<Double>> dataset = loadFile(pathTrain);
+		List<ArrayList<Double>> testSet = loadFile(pathTest);
 		
 		//System.out.println(dataset);
 		
@@ -23,12 +24,10 @@ public class Main {
 		
 		System.out.println("SSE:");
 		for(float i = 0; i < 1; i+=0.01){
-			double sse = suburbs.train(dataset, i);
-			System.out.println(i+ ", " + sse);
+			suburbs.train(dataset, i);
+			System.out.println(i+ ", " + suburbs.evaluateSSE(testSet));
 		}
 	}
-	
-	
 	
 	public static List<ArrayList<Double>> loadFile(Path path){
 		
