@@ -1,13 +1,17 @@
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import Jama.Matrix;
 
 public class BostonSuburbs {
 	
-	private Matrix w;
+	public Matrix w;
 	
-	public void train(List<ArrayList<Double>> dataset, double sigma){
+	public void train(List<ArrayList<Double>> dataset, double lambda, boolean withDummy){
 		//Linear Regression algorithm here
 		Matrix x,y;
 		
@@ -21,7 +25,8 @@ public class BostonSuburbs {
 			//e is a list of 14 elements
 			ArrayList<Double> firstSet = new ArrayList<Double>();
 			
-			firstSet.add(1.0); //Dummy Variable
+			if(withDummy)
+				firstSet.add(1.0); //Dummy Variable
 			
 			for(int i = 0; i < e.size()-1; i++){
 				firstSet.add(e.get(i));
@@ -45,13 +50,15 @@ public class BostonSuburbs {
 		Matrix I = (x.transpose().times(x));
 		I = Matrix.identity(I.getRowDimension(), I.getColumnDimension());
 		
-		//w = (XT * X + sigmaI)^−1 * XT * Y
-		w = (x.transpose().times(x).plus(I.times(sigma))).inverse().times(x.transpose()).times(y); //14x1 //Learned weight vector
+		//w = (XT * X + lambdaI)^−1 * XT * Y
+		w = (x.transpose().times(x).plus(I.times(lambda))).inverse().times(x.transpose()).times(y); //14x1 //Learned weight vector
 		
 		//Print dimensions for debugging
 		//System.out.println("X is " + x.getRowDimension() + "x" + x.getColumnDimension());
 		//System.out.println("Y is " + y.getRowDimension() + "x" + y.getColumnDimension());
 		//System.out.println("W is " + w.getRowDimension() + "x" + w.getColumnDimension());
+		//todo print out w in file
+		
 		
 		//Print Matrices
 		//x.print(0, 5);
@@ -60,7 +67,7 @@ public class BostonSuburbs {
 
 	}
 	
-	public double evaluateSSE(List<ArrayList<Double>> dataset){
+	public double evaluateSSE(List<ArrayList<Double>> dataset, boolean withDummy){
 		
 		Matrix x,y;
 		
@@ -71,7 +78,8 @@ public class BostonSuburbs {
 			//e is a list of 14 elements
 			ArrayList<Double> firstSet = new ArrayList<Double>();
 			
-			firstSet.add(1.0); //Dummy Variable
+			if(withDummy)
+				firstSet.add(1.0); //Dummy Variable
 			
 			for(int i = 0; i < e.size()-1; i++){
 				firstSet.add(e.get(i));
