@@ -3,14 +3,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
 public class Main {
 	public static void main(String args[]){
 		
-		List<ArrayList<Float>> dataset = new ArrayList<ArrayList<Float>>();
+		List<ArrayList<Double>> dataset = new ArrayList<ArrayList<Double>>();
 		
 		//Parse housing_train.txt into List
 		try {
@@ -20,17 +19,17 @@ public class Main {
 			for(Object line : lines){
 				
 				String[] stringData = ((String)line).split(" "); //Convert line into list
-				ArrayList<Float> data = new ArrayList<Float>();
+				ArrayList<Double> data = new ArrayList<Double>();
 				
-				for( int i = 0; i < stringData.length; i++){ //Convert every entry into Float
+				for( int i = 0; i < stringData.length; i++){ //Convert every entry into Double
 					
 					if(stringData[i].equals(" ") || stringData[i].equals("")){
 						continue;
 					}
 					
-					//Parse string into Float
+					//Parse string into Double
 					try {
-						data.add(Float.parseFloat(stringData[i]));
+						data.add(Double.parseDouble(stringData[i]));
 					} catch (NumberFormatException nfe) {
 						nfe.printStackTrace();
 					}
@@ -44,7 +43,7 @@ public class Main {
 			return;
 		}
 		
-		System.out.println(dataset);
+		//System.out.println(dataset);
 		
 		BostonSuburbs suburbs = new BostonSuburbs();
 		
