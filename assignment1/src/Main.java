@@ -1,4 +1,7 @@
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,11 +25,23 @@ public class Main {
 		
 		BostonSuburbs suburbs = new BostonSuburbs();
 		
-		System.out.println("SSE:");
-		for(float i = 0; i < 1; i+=0.01){
-			suburbs.train(dataset, i);
-			System.out.println(i+ ", " + suburbs.evaluateSSE(testSet));
+		try {
+			PrintWriter writer = new PrintWriter("SuburbData.txt", "UTF-8");
+			
+			System.out.println("SSE:");
+			for(float i = 0; i < 5; i+=0.01){
+				suburbs.train(dataset, i);
+				writer.println(i+ " " + suburbs.evaluateSSE(testSet));
+			}
+			
+			writer.close();
+			
+		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
+		
 	}
 	
 	public static List<ArrayList<Double>> loadFile(Path path){
