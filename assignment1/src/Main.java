@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class Main {
 
@@ -77,6 +78,15 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		
+		//Test singular house value return
+		suburbs.train(dataset, 0.21, true);
+		Double[] testData = {0.84054, 0.00, 8.140, 0.0, 0.5380, 5.5990, 85.70, 4.4546, 4.0, 307.0, 21.00, 303.42, 16.51};
+		ArrayList<Double> testHouse = new ArrayList<Double>(Arrays.asList(testData));
+		
+		
+		System.out.println("House value: " + suburbs.getHouseProperty(testHouse));
 		System.out.println("Done!");
 	}
 

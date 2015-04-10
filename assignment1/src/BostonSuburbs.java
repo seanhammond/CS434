@@ -108,6 +108,24 @@ public class BostonSuburbs {
 		
 	}
 	
+	public double getHouseProperty(List<Double> data){
+		
+		ArrayList<Double> xSet = new ArrayList<Double>();
+		xSet.add(1.0); //Dummy Variable
+		
+		for(Double e : data){
+			xSet.add(e);
+		}
+		
+		double[] xMatrix = toDoubleArray(xSet);
+		
+		Matrix x = new Matrix(xMatrix, 1); //1xn
+		x = x.transpose(); //nx1
+		
+		return w.transpose().times(x).get(0, 0);
+		
+	}
+	
 	
 	private double[] toDoubleArray(List<Double> list){
 		double[] array = new double[list.size()];
