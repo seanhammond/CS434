@@ -1,2 +1,2 @@
 # CS434
-CS434 Sprint 2015
+CS434 Spring 2015

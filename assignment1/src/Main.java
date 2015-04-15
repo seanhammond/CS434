@@ -14,46 +14,50 @@ public class Main {
 
 	public static void main(String args[]) {
 
-		// Parse housing_train.txt into List
+		// Sets variables for path to data file
 		Path pathTrain = Paths.get(System.getProperty("user.dir")
 				+ "/src/housing_train.txt"); // Get path
 		Path pathTest = Paths.get(System.getProperty("user.dir")
 				+ "/src/housing_test.txt"); // Get path
 
+		// Parse input data into Lists
 		List<ArrayList<Double>> dataset = loadFile(pathTrain);
 		List<ArrayList<Double>> testSet = loadFile(pathTest);
 
-		// System.out.println(dataset);
-
+		
 		BostonSuburbs suburbs = new BostonSuburbs();
 		
 
 		try {
-
-			suburbs.train(dataset, 0,true); // lambda 0
+			// Takes a dataset, lambda value, and boolean for including the dummy value
+			suburbs.train(dataset, 0,true);
 			
+			// Writes the W matrix when calculated with lambda=0 and with the dummy value
 			PrintWriter writer = new PrintWriter("W.txt", "UTF-8");
 			writer.println(Arrays.toString(suburbs.w.transpose().getArray()[0]));
 			writer.close();
 
+			// Writes the SSE value with lambda=0 and with the dummy value
 			writer = new PrintWriter("SSE.txt", "UTF-8");
 			suburbs.train(dataset, 0,true);
 			writer.println(suburbs.evaluateSSE(testSet,true));
 			writer.close();
 
-			//Without DUmmy
-			suburbs.train(dataset, 0, false); // lambda 0
+			// Takes a dataset, lambda value, and boolean for including the dummy value
+			suburbs.train(dataset, 0, false);
 			
+			// Writes the W matrix when calculated with lambda=0 and without the dummy value
 			writer = new PrintWriter("W_NoDummy.txt", "UTF-8");
 			writer.println(Arrays.toString(suburbs.w.transpose().getArray()[0]));
 			writer.close();
-
+			
+			// Writes the SSE value with lambda=0 and without the dummy value
 			writer = new PrintWriter("SSE_NoDummy.txt", "UTF-8");
 			suburbs.train(dataset, 0, false);
 			writer.println(suburbs.evaluateSSE(testSet,false));
 			writer.close();
 			
-			
+			// Writes SEE values with Lambda values varying and with the dummy value
 			writer = new PrintWriter("lambda_vs_SSE.txt", "UTF-8");
 			for (float i = 0; i <= 5; i+=0.01) {
 
@@ -64,8 +68,9 @@ public class Main {
 			writer.close();
 			
 			
+			// Writes the W values for lambda values varying and with the dummy value
 			PrintWriter fp = new PrintWriter("W_vs_lambda.txt", "UTF-8");
-			//Lambda vs W comparisons
+			// Lambda vs W comparisons
 			for (int i = 0; i <= 5; i++) {
 				suburbs.train(dataset, i,true);
 				fp.println(i + " "
@@ -75,21 +80,20 @@ public class Main {
 			fp.close();
 
 		} catch (FileNotFoundException | UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		
-		//Test singular house value return
+		// Test for singular house value return
 		suburbs.train(dataset, 0.21, true);
 		Double[] testData = {0.84054, 0.00, 8.140, 0.0, 0.5380, 5.5990, 85.70, 4.4546, 4.0, 307.0, 21.00, 303.42, 16.51};
 		ArrayList<Double> testHouse = new ArrayList<Double>(Arrays.asList(testData));
-		
 		
 		System.out.println("House value: " + suburbs.getHouseProperty(testHouse));
 		System.out.println("Done!");
 	}
 
+	// Preconditions:	path set to a valid file path 	
+	// Postconditions:	Creates a list of doubles containing data from specified input file
 	public static List<ArrayList<Double>> loadFile(Path path) {
 
 		List<ArrayList<Double>> dataset = new ArrayList<ArrayList<Double>>();
