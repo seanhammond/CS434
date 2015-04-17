@@ -30,6 +30,7 @@ public class Main {
 	public static MatrixPac parseCSV(String path) throws IOException{
 		MatrixPac data = new MatrixPac();
 		int numberOfLines = 0;
+		//need to read through and find out number of lines to initialize 2D array.
 		try {
 			FileReader file_to_read = new FileReader(path);
 			BufferedReader bf = new BufferedReader(file_to_read);
@@ -46,8 +47,8 @@ public class Main {
 			e.printStackTrace();
 		}
 		
-		data.x_values = new String[numberOfLines][256];
-		data.y_values = new String[numberOfLines];
+		data.x_values = new int[numberOfLines][256];
+		data.y_values = new int[numberOfLines];
 		String line = "";
 		String splitBy = ",";
 		
@@ -57,9 +58,9 @@ public class Main {
 			while((line = br.readLine()) != null){
 				String[] oneLine = line.split(splitBy);
 				for(int i = 0; i< 256; i++){
-					data.x_values[j][i] = oneLine[i];
+					data.x_values[j][i] = Integer.parseInt(oneLine[i]);
 				}
-				data.y_values[j] = oneLine[256];
+				data.y_values[j] = Integer.parseInt(oneLine[256]);
 				j++;
 			}
 			br.close();
