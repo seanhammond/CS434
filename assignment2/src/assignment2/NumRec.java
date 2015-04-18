@@ -34,8 +34,27 @@ public class NumRec {
 		}
 	}
 	
-	public static double testData(MatrixPac p, float lambda){
+	public double testData(MatrixPac p, float lambda){
 		double accuracy = 0.0;
+		double right = 0.0;
+		Matrix x = new Matrix( p.x_values);
+		
+		x = x.transpose();
+		
+		w = new Matrix(p.x_values[0].length,1); //Comment out once training is complete
+		
+		for(int i = 0; i < p.x_values.length; i++){
+			//Compute prediction
+			//Y = 1/(1+e^(-wTx[i])
+			double predY = Math.round(1/(1+ Math.pow(Math.E, ( w.transpose().times(-1).times( x )).get(0, 0) ) )) ;
+			
+			//Test prediction
+			if(p.y_values[i] == predY){
+				right++;
+			}
+			
+		}
+		accuracy = right/(p.x_values.length);
 		
 		return accuracy;
 	}

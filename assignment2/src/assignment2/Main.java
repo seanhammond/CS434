@@ -14,9 +14,14 @@ public class Main {
 		Path pathTrain = Paths.get(System.getProperty("user.dir")+ "/src/usps-4-9-train.csv"); // Get path
 		//Parse training data
 		MatrixPac training = new MatrixPac();
+		
+		NumRec rec = new NumRec();
+		
 		try {
 			training = parseCSV(pathTrain.toString());
-			//System.out.print(training);
+			
+			double accuracy = rec.testData(training, 0);
+			System.out.print(accuracy*100 + "%");
 		}catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -47,8 +52,8 @@ public class Main {
 			e.printStackTrace();
 		}
 		
-		data.x_values = new int[numberOfLines][256];
-		data.y_values = new int[numberOfLines];
+		data.x_values = new double[numberOfLines][256];
+		data.y_values = new double[numberOfLines];
 		String line = "";
 		String splitBy = ",";
 		
@@ -58,9 +63,9 @@ public class Main {
 			while((line = br.readLine()) != null){
 				String[] oneLine = line.split(splitBy);
 				for(int i = 0; i< 256; i++){
-					data.x_values[j][i] = Integer.parseInt(oneLine[i]);
+					data.x_values[j][i] = Double.parseDouble(oneLine[i]);
 				}
-				data.y_values[j] = Integer.parseInt(oneLine[256]);
+				data.y_values[j] = Double.parseDouble(oneLine[256]);
 				j++;
 			}
 			br.close();
