@@ -5,11 +5,7 @@ import Jama.Matrix;
 public class NumRec {
 
 	public Matrix w;
-	
-	public static double sigmoid(double x){
-		return 1 / (1 + Math.exp(-x));
-	}
-	
+		
 	//updates matrix w after it finishes training
 	//follows slide 15 from logistic regression set
 	public void trainData(MatrixPac p, float lr, float lambda){
@@ -18,19 +14,16 @@ public class NumRec {
 		int num_iter = 1000;
 		double sigma_y = 0;
 		double err = 0;
-		double d = 0;
+		Matrix d = null;
+		Matrix x = new Matrix(p.x_values);
+		
 		for (int i = 0; i < num_iter; i++){
 			for(int j = 0; j < (p.x_values.length) - 1; j++){
-				for(int k = 0; k < p.x_values[j].length; k++){
-					//todo: fix this
-					//sigma_y = sigmoid(-w*p.x_values[j][k]);
-					err = p.y_values[j] - sigma_y;
-					d = d + err*p.x_values[j][k];
-				}
-				
+				sigma_y = Math.round(1/(1+ Math.pow(Math.E, ( w.transpose().times(-1).times( x )).get(0, 0) ) )) ;
+				err = p.y_values[j] - sigma_y;
+				d = d.plus(x.times(err));	
 			}
-			//fix this
-			//w = w + lr*d;
+			w = w.plus(d.times(lr));
 		}
 	}
 	
