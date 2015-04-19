@@ -24,7 +24,7 @@ public class Main {
 			training = parseCSV(pathTrain.toString());
 			testing = parseCSV(pathTest.toString());
 			
-			rec.recordIterationAccuracy(training, testing, 0.001, 0);
+			//rec.recordIterationAccuracy(training, testing, 0.001, 0, ("iteration-accuracy.tsv"));
 			
 			/*
 			
@@ -38,6 +38,17 @@ public class Main {
 			      System.out.println("Training: " + accuracy*100 + "%");
 			}
 			*/
+			
+			//for(double i = 1.; i >= 0.001; i -=0.001){
+				rec.trainDataLambda(training, 0.001, 1);
+			    System.out.println(Arrays.toString(rec.w.getArray()[0]));
+			      
+			    double accuracy = rec.testData(training, 0); 
+			    System.out.println("Training: " + accuracy*100 + "%");
+			      
+			    accuracy = rec.testData(testing, 0); 
+			    System.out.println("Training: " + accuracy*100 + "%");
+			//}
 		}catch (IOException e) {
 			e.printStackTrace();
 		}
