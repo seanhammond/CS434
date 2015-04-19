@@ -16,6 +16,7 @@ public class NumRec {
 		double err = 0;
 		Matrix d = null;
 		Matrix x = new Matrix(p.x_values);
+		w = new Matrix(p.x_values[0].length,1); //Comment out once training is complete
 		
 		for (int i = 0; i < num_iter; i++){
 			for(int j = 0; j < (p.x_values.length) - 1; j++){
@@ -31,10 +32,7 @@ public class NumRec {
 		double accuracy = 0.0;
 		double right = 0.0;
 		Matrix x = new Matrix( p.x_values);
-		
 		x = x.transpose();
-		
-		w = new Matrix(p.x_values[0].length,1); //Comment out once training is complete
 		
 		for(int i = 0; i < p.x_values.length; i++){
 			//Compute prediction
