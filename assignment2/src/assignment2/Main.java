@@ -13,19 +13,25 @@ public class Main {
 	
 	public static void main(String args[]){
 		Path pathTrain = Paths.get(System.getProperty("user.dir")+ "/src/usps-4-9-train.csv"); // Get path
+		Path pathTest = Paths.get(System.getProperty("user.dir")+ "/src/usps-4-9-test.csv"); // Get path
 		//Parse training data
 		MatrixPac training = new MatrixPac();
+		MatrixPac testing = new MatrixPac();
 		
 		NumRec rec = new NumRec();
 		
 		try {
 			training = parseCSV(pathTrain.toString());
+			testing = parseCSV(pathTest.toString());
 			
-			for(float i = 1; i >= 0.01; i-=0.01){
+			for(double i = 0.01; i >= 0.001; i-=0.001){
 			      rec.trainData(training, i, 0);
-			      System.out.print(Arrays.toString(rec.w.transpose().getArray()));
+			      System.out.println(Arrays.toString(rec.w.getArray()[0]));
 			      double accuracy = rec.testData(training, 0); 
-			      System.out.print(accuracy*100 + "%");
+			      System.out.println("Training: " + accuracy*100 + "%");
+			      
+			      accuracy = rec.testData(testing, 0); 
+			      System.out.println("Training: " + accuracy*100 + "%");
 			}
 		}catch (IOException e) {
 			e.printStackTrace();
