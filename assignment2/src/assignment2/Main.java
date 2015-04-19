@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 public class Main {
 	
@@ -20,8 +21,12 @@ public class Main {
 		try {
 			training = parseCSV(pathTrain.toString());
 			
-			double accuracy = rec.testData(training, 0);
-			System.out.print(accuracy*100 + "%");
+			for(float i = 1; i >= 0.01; i-=0.01){
+			      rec.trainData(training, i, 0);
+			      System.out.print(Arrays.toString(rec.w.transpose().getArray()));
+			      double accuracy = rec.testData(training, 0); 
+			      System.out.print(accuracy*100 + "%");
+			}
 		}catch (IOException e) {
 			e.printStackTrace();
 		}
