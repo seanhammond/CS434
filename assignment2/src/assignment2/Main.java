@@ -7,57 +7,46 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 
 public class Main {
 	
 	public static void main(String args[]){
+		
+		//Create paths for data files
 		Path pathTrain = Paths.get(System.getProperty("user.dir")+ "/src/usps-4-9-train.csv"); // Get path
 		Path pathTest = Paths.get(System.getProperty("user.dir")+ "/src/usps-4-9-test.csv"); // Get path
-		//Parse training data
+		
 		MatrixPac training = new MatrixPac();
 		MatrixPac testing = new MatrixPac();
 		
 		NumRec rec = new NumRec();
 		
 		try {
+			
+			//Parse data files
 			training = parseCSV(pathTrain.toString());
 			testing = parseCSV(pathTest.toString());
 			
-			//rec.recordIterationAccuracy(training, testing, 0.001, 0, ("iteration-accuracy.tsv"));
-			
-			/*
-			
-			for(double i = 0.01; i >= 0.001; i-=0.001){
-			      rec.trainData(training, i, 0);
-			      System.out.println(Arrays.toString(rec.w.getArray()[0]));
-			      double accuracy = rec.testData(training, 0); 
-			      System.out.println("Training: " + accuracy*100 + "%");
-			      
-			      accuracy = rec.testData(testing, 0); 
-			      System.out.println("Training: " + accuracy*100 + "%");
+			//Record iteration accuracy for both training and testing data for different learning rates
+			for(double i = 0.0001; i <= 1; i*=10){
+				System.out.println("Recording accuracy for learning rate: " + i);
+				rec.recordIterationAccuracy(training, testing, 0.001, 0, ("iteration-accuracy-"+i+".tsv"));
 			}
-			*/
 			
-			//for(double i = 1.; i >= 0.001; i -=0.001){
-				rec.trainDataLambda(training, 0.001, 1);
-			    System.out.println(Arrays.toString(rec.w.getArray()[0]));
-			      
-			    double accuracy = rec.testData(training, 0); 
-			    System.out.println("Training: " + accuracy*100 + "%");
-			      
-			    accuracy = rec.testData(testing, 0); 
-			    System.out.println("Training: " + accuracy*100 + "%");
-			//}
+			//Record different lambda trends
+			for(double i = Math.pow(10, -3); i <= Math.pow(10, 2); i *=10){
+				System.out.println("Recording accuracy for lambda: " + i);
+			    rec.recordIterationAccuracy(training, testing, 0.0001,i, ("lambda-"+i+".tsv"));
+			}
+			
+			System.out.println("Done!");
+			
 		}catch (IOException e) {
 			e.printStackTrace();
 		}
-		//Pass results into the training data function
-		//Parse Testing data
-		//Pass results into the testing data function
-		
 		
 	}
+	
 	
 	public static MatrixPac parseCSV(String path) throws IOException{
 		MatrixPac data = new MatrixPac();
