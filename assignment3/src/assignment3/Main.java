@@ -14,7 +14,7 @@ public class Main {
 	public static void main(String args[]){
 		
 		Path pathTrain = Paths.get(System.getProperty("user.dir")+ "/src/knn_train.csv"); // Get path
-		Path pathTest = Paths.get(System.getProperty("user.dir")+ "/src/knn-test.csv"); // Get path
+		Path pathTest = Paths.get(System.getProperty("user.dir")+ "/src/knn_test.csv"); // Get path
 		
 		
 		KNN knn = new KNN();
@@ -23,7 +23,7 @@ public class Main {
 			MatrixPac trainingData = parseCSV(pathTrain.toString());
 			MatrixPac testingData = parseCSV(pathTest.toString());
 
-			
+			knn.determineBestK(trainingData);
 			
 		} catch (IOException e) {
 			e.printStackTrace();

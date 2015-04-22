@@ -1,5 +1,7 @@
 package assignment3;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 public class KNN {
 	
 	private final int maxK = 15;
@@ -10,6 +12,29 @@ public class KNN {
 	public int determineBestK(MatrixPac p){
 		
 		
+		MatrixPac trainSet = new MatrixPac();
+		trainSet.y_values = p.y_values;
+		
+		double[][] xs = p.x_values;
+		
+		for(int k = 1; k <= 205; k +=2){
+			K = k;
+			float wrong = 0;
+			
+			for(int i = 0; i < xs.length; i++){
+				double[] validator = xs[i];
+				trainSet.x_values = ArrayUtils.remove(xs, i);
+				
+				
+				//Get validation error
+				int y = getNearestValue(validator, trainSet);
+				if(y != p.y_values[i]){
+					wrong++;
+				}
+			}
+			
+			System.out.println(K + " Error: " + (wrong/xs.length ));
+		}
 		
 		return 0;
 	}
