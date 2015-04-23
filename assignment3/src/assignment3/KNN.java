@@ -1,5 +1,8 @@
 package assignment3;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -21,7 +24,7 @@ public class KNN {
 
 	//Test K from 1-15 using leave-one-out cross-validation
 	//Return best K
-	public int determineBestK(MatrixPac p){
+	public int determineBestK(MatrixPac p) throws FileNotFoundException, UnsupportedEncodingException{
 		
 		MatrixPac trainSet = new MatrixPac();
 		trainSet.y_values = p.y_values;
@@ -49,15 +52,16 @@ public class KNN {
 			
 			errors.add(new ErrorK(k,error));
 		}
-		
+		PrintWriter writer = new PrintWriter("allErrors.tsv", "UTF-8");
 		ErrorK bestK = errors.get(0);
 		
 		for(ErrorK error : errors){
+			writer.println(error.error);
 			if(error.error < bestK.error){
 				bestK = error;
 			}
 		}
-		
+		writer.close();
 		//TODO Produce a graph of all the errors off cross-validation to show why we chose that k value
 		
 		return bestK.k;
