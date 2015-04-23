@@ -54,9 +54,9 @@ public class KNN {
 		}
 		PrintWriter writer = new PrintWriter("allErrors.tsv", "UTF-8");
 		ErrorK bestK = errors.get(0);
-		
+		writer.println("K\tError");
 		for(ErrorK error : errors){
-			writer.println(error.error);
+			writer.println(error.k + "\t" + error.error);
 			if(error.error < bestK.error){
 				bestK = error;
 			}

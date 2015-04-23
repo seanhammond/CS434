@@ -5,13 +5,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Main {
 	
 	
-	public static void main(String args[]){
+	public static void main(String args[]) throws FileNotFoundException, UnsupportedEncodingException{
 		
 		Path pathTrain = Paths.get(System.getProperty("user.dir")+ "/src/knn_train.csv"); // Get path
 		Path pathTest = Paths.get(System.getProperty("user.dir")+ "/src/knn_test.csv"); // Get path
@@ -26,17 +27,20 @@ public class Main {
 			int bestK = knn.determineBestK(trainingData);
 			
 			System.out.println("Best K value: " + bestK);
-			
+			PrintWriter writer = new PrintWriter("errorAnalysis.tsv", "UTF-8");
+			writer.println("K\tValidationError\tTrain Error\tTest Error");
 			for(int k = 1; k <= 205; k+=2){
 				
 				//TODO Print into tsv or csv file to graph
 				System.out.println("K: " + k);
+				
 				knn.K = k;
 				System.out.println("Validation Erro: " + knn.getValidationError(trainingData));
 				System.out.println("Train Error: " + knn.getError(trainingData, trainingData));
 				System.out.println("Test Error: " + knn.getError(trainingData, testingData));
+				writer.println(k + "\t" + knn.getValidationError(trainingData) + "\t" + knn.getError(trainingData, trainingData) + "\t" + knn.getError(trainingData, testingData));
 			}
-			
+			writer.close();
 			
 		} catch (IOException e) {
 			e.printStackTrace();
