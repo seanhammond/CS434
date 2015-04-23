@@ -23,7 +23,20 @@ public class Main {
 			MatrixPac trainingData = parseCSV(pathTrain.toString());
 			MatrixPac testingData = parseCSV(pathTest.toString());
 
-			knn.determineBestK(trainingData);
+			int bestK = knn.determineBestK(trainingData);
+			
+			System.out.println("Best K value: " + bestK);
+			
+			for(int k = 1; k <= 205; k+=2){
+				
+				//TODO Print into tsv or csv file to graph
+				System.out.println("K: " + k);
+				knn.K = k;
+				System.out.println("Validation Erro: " + knn.getValidationError(trainingData));
+				System.out.println("Train Error: " + knn.getError(trainingData, trainingData));
+				System.out.println("Test Error: " + knn.getError(trainingData, testingData));
+			}
+			
 			
 		} catch (IOException e) {
 			e.printStackTrace();

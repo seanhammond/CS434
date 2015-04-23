@@ -1,19 +1,32 @@
 package assignment3;
 
+import java.util.ArrayList;
+
 import org.apache.commons.lang3.ArrayUtils;
 
 public class KNN {
 	
 	private final int maxK = 15;
 	public int K = 1;
+	
+	private class ErrorK {
+		public int k;
+		public double error;
+		
+		public ErrorK(int k, double error){
+			this.k = k;
+			this.error = error;
+		}
+	}
 
 	//Test K from 1-15 using leave-one-out cross-validation
 	//Return best K
 	public int determineBestK(MatrixPac p){
 		
-		
 		MatrixPac trainSet = new MatrixPac();
 		trainSet.y_values = p.y_values;
+		
+		ArrayList<ErrorK> errors = new ArrayList<ErrorK>();
 		
 		double[][] xs = p.x_values;
 		
@@ -32,11 +45,60 @@ public class KNN {
 					wrong++;
 				}
 			}
+			double error = ((double)wrong/(double)xs.length );
 			
-			System.out.println(K + " Error: " + (wrong/xs.length ));
+			errors.add(new ErrorK(k,error));
 		}
 		
-		return 0;
+		ErrorK bestK = errors.get(0);
+		
+		for(ErrorK error : errors){
+			if(error.error < bestK.error){
+				bestK = error;
+			}
+		}
+		
+		//TODO Produce a graph of all the errors off cross-validation to show why we chose that k value
+		
+		return bestK.k;
+	}
+	
+	public double getValidationError(MatrixPac train){
+		
+		MatrixPac trainSet = new MatrixPac();
+		trainSet.y_values = train.y_values;
+		
+		float wrong = 0;
+		double[][] xs = train.x_values;
+		
+		for(int i = 0; i < xs.length; i++){
+			double[] validator = xs[i];
+			trainSet.x_values = ArrayUtils.remove(xs, i);
+			
+			
+			//Get validation error
+			int y = getNearestValue(validator, trainSet);
+			if(y != train.y_values[i]){
+				wrong++;
+			}
+		}
+		return ((double)wrong/(double)xs.length );
+	}
+	
+	public double getError(MatrixPac train, MatrixPac test){
+		//For every vector in the test set
+		
+		double[][] testX = test.x_values;
+		int wrong = 0;
+		for(int i = 0; i < testX.length; i++){
+			
+			int value = getNearestValue(testX[i],train);
+			if(value != test.y_values[i]){
+				wrong++;
+			}
+		}
+		
+		return ((double)wrong/(double)testX.length);
 	}
 	
 	
@@ -58,7 +120,6 @@ public class KNN {
 			double sum = Math.sqrt(distanceSum);
 			distances[i] = sum;
 		}
-		
 		
 		int[] closetIndices = new int[K];
 		for(int i = 0; i < K; i++){
