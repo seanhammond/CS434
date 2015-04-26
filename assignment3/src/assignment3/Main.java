@@ -18,9 +18,9 @@ public class Main {
 		//Path pathTest = Paths.get(System.getProperty("user.dir")+ "/src/knn_test.csv"); // Get path
 		
 		Path pathTrainD = Paths.get(System.getProperty("user.dir")+ "/src/monks-1-train.csv"); // Get path
-		//Path pathTestD = Paths.get(System.getProperty("user.dir")+ "/src/knn_test.csv"); // Get path
+		//Path pathTestD = Paths.get(System.getProperty("user.dir")+ "/src/monks-1-test.csv"); // Get path
 		
-		KNN knn = new KNN();
+		//KNN knn = new KNN();
 		DecisionTree dt = new DecisionTree();
 		
 		try {
@@ -37,7 +37,7 @@ public class Main {
 			writer.println("K\tValidationError\tTrain Error\tTest Error");
 			for(int k = 1; k <= 205; k+=2){
 				
-				//TODO Print into tsv or csv file to graph
+				
 				System.out.println("K: " + k);
 				
 				knn.K = k;
