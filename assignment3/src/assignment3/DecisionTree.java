@@ -1,5 +1,9 @@
 package assignment3;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+
 public class DecisionTree {
 	
 	Node root;
@@ -14,7 +18,7 @@ public class DecisionTree {
 	}
 	
 	//takes set of training examples
-	public int chooseRoot(MatrixPac p){
+	public int chooseRoot(MatrixPac p) throws FileNotFoundException, UnsupportedEncodingException{
 		int bestAttr = -1;
 		int bestValue = 1;
 		double bestGain = -1;
@@ -31,7 +35,7 @@ public class DecisionTree {
 				negative++;
 			}
 		}
-		
+		PrintWriter writer = new PrintWriter("testGain.txt", "UTF-8");
 		double baseEntropy = calcEntropy(positive,negative);
 		
 		System.out.println("Base Entropy H(S) = " + baseEntropy);
@@ -96,6 +100,7 @@ public class DecisionTree {
 				double hs2 = calcEntropy(otherPositive, otherNegative);
 				
 				gain =  baseEntropy - (p1*hs1 + p2*hs2 );
+				writer.println("Gain for test x" + (i+1) + ": " + gain);
 				if (gain > bestGain){
 					bestGain = gain;
 					bestAttr = i+1;
@@ -109,7 +114,7 @@ public class DecisionTree {
 			//	bestGain = gain;
 			//	bestAttr = i;
 			//}
-			
+			writer.close();
 		}
 		
 		System.out.println("Best attribute: x" + bestAttr + " with value: " + bestValue + " with information gain: " + bestGain);
