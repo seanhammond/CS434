@@ -52,7 +52,8 @@ public class Main {
 			
 			//Decision Tree
 			
-			dt.chooseRoot(trainingDData);
+			//dt.chooseRoot(trainingDData);
+			dt.growTree(trainingDData);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
