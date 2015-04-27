@@ -127,9 +127,9 @@ public class DecisionTree {
 			//	bestGain = gain;
 			//	bestAttr = i;
 			//}
-			writer.close();
-		}
 		
+		}
+		writer.close();
 		System.out.println("Best attribute: x" + bestAttr + " with value: " + bestValue + " with information gain: " + bestGain);
 		int[] best = new int[2];
 		best[0] = bestAttr;
@@ -144,6 +144,7 @@ public class DecisionTree {
 		n.children[0] = expandTree(posBranch);
 		n.children[1] = expandTree(negBranch);
 		//need to add stopping condition
+		//if(n.gain == 0 || n.gain < 0.000
 		return n;
 		
 	}
