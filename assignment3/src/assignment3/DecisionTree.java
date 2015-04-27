@@ -100,7 +100,7 @@ public class DecisionTree {
 				double hs2 = calcEntropy(otherPositive, otherNegative);
 				
 				gain =  baseEntropy - (p1*hs1 + p2*hs2 );
-				writer.println("Gain for test x" + (i+1) + ": " + gain);
+				writer.println("Gain for test x" + (i+1) + ": " + gain + " with value: " + (k+1));
 				if (gain > bestGain){
 					bestGain = gain;
 					bestAttr = i+1;
