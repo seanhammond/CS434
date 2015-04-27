@@ -8,6 +8,8 @@ import java.io.UnsupportedEncodingException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Main {
 	
@@ -22,6 +24,8 @@ public class Main {
 		
 		//KNN knn = new KNN();
 		DecisionTree dt = new DecisionTree();
+		
+		
 		
 		try {
 			//MatrixPac trainingData = parseCSVKNN(pathTrain.toString());
@@ -51,8 +55,9 @@ public class Main {
 			*/
 			
 			//Decision Tree
-			
-			//dt.chooseRoot(trainingDData);
+
+			//List<Integer> attrs = new ArrayList<Integer>(6);
+			//dt.chooseRoot(trainingDData, attrs);
 			dt.growTree(trainingDData);
 			
 		} catch (IOException e) {
