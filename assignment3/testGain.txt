@@ -1,3 +1,17 @@
-Gain for test x1: 0.05975219150469124
-Gain for test x1: 8.380397143501472E-4
-Gain for test x1: 0.05153479275836825
+Gain for test x1: 0.05975219150469124 with value: 1
+Gain for test x1: 8.380397143501472E-4 with value: 2
+Gain for test x1: 0.05153479275836825 with value: 3
+Gain for test x2: 0.005804416680231128 with value: 1
+Gain for test x2: 8.380397143501472E-4 with value: 2
+Gain for test x2: 0.0017948307725639268 with value: 3
+Gain for test x3: 0.004707566617297099 with value: 1
+Gain for test x3: 0.004707566617297099 with value: 2
+Gain for test x4: 0.02109666586147929 with value: 1
+Gain for test x4: 0.017745680514583917 with value: 2
+Gain for test x4: 2.071192529483623E-4 with value: 3
+Gain for test x5: 0.28620076122076754 with value: 1
+Gain for test x5: 0.02049579713686822 with value: 2
+Gain for test x5: 0.01652723812275325 with value: 3
+Gain for test x5: 0.034512391115429475 with value: 4
+Gain for test x6: 7.578557158638421E-4 with value: 1
+Gain for test x6: 7.578557158638421E-4 with value: 2
