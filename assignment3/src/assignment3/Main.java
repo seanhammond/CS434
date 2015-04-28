@@ -20,7 +20,7 @@ public class Main {
 		//Path pathTest = Paths.get(System.getProperty("user.dir")+ "/src/knn_test.csv"); // Get path
 		
 		Path pathTrainD = Paths.get(System.getProperty("user.dir")+ "/src/monks-1-train.csv"); // Get path
-		//Path pathTestD = Paths.get(System.getProperty("user.dir")+ "/src/monks-1-test.csv"); // Get path
+		Path pathTestD = Paths.get(System.getProperty("user.dir")+ "/src/monks-1-test.csv"); // Get path
 		
 		//KNN knn = new KNN();
 		DecisionTree dt = new DecisionTree();
@@ -32,6 +32,7 @@ public class Main {
 			//MatrixPac testingData = parseCSVKNN(pathTest.toString());
 			
 			MatrixPac trainingDData = parseCSVD(pathTrainD.toString());
+			MatrixPac testingDData = parseCSVD(pathTestD.toString());
 
 			/* KNN
 			int bestK = knn.determineBestK(trainingData);
@@ -59,6 +60,8 @@ public class Main {
 			//List<Integer> attrs = new ArrayList<Integer>(6);
 			//dt.chooseRoot(trainingDData, attrs);
 			dt.growTree(trainingDData);
+			System.out.println("Training Error: " + dt.dataError(trainingDData));
+			System.out.println("Testing Error: " + dt.dataError(testingDData));
 			
 		} catch (IOException e) {
 			e.printStackTrace();

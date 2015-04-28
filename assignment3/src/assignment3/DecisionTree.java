@@ -11,8 +11,6 @@ public class DecisionTree {
 	Node root;
 	final int LARGEST_ATTRIBUTE = 4;
 	final int NUM_ATTR = 6;
-	MatrixPac posBranch;
-	MatrixPac negBranch;
 	List<Integer> usedAttr = new ArrayList<Integer>();
 	
 	public class Node {
@@ -21,41 +19,42 @@ public class DecisionTree {
 			this.value = i[1];
 			this.children = new Node[2];
 		}
-		boolean isLeaf; //used for when selecting root
+		public Node(double yClass){
+			this.yClass = yClass;
+		}
+		double yClass; //If the node is a leaf, it has the associated y value
+		boolean isLeaf = false; //used for when selecting root
 		int attr; 
 		int value;
 		Node[] children;
 		
 	}
 	
+	private class SplitReturn{
+		MatrixPac positiveBranch;
+		MatrixPac negativeBranch;
+		
+		public SplitReturn(MatrixPac pos, MatrixPac neg){
+			positiveBranch = pos;
+			negativeBranch = neg;
+		}
+	}
+	
 	//takes set of training examples
-	public int[] chooseRoot(MatrixPac p, List<Integer> usedAttr) throws FileNotFoundException, UnsupportedEncodingException{
+	public int[] chooseRoot(MatrixPac p) throws FileNotFoundException, UnsupportedEncodingException{
 		int bestAttr = -1;
 		int bestValue = 1;
 		double bestGain = -1;
 		double[][] count = new double[p.x_values[0].length][LARGEST_ATTRIBUTE]; //[number of attr][3]
-		double[] ent = new double[p.x_values[0].length];
 		double gain = 0;
 		
-		double positive = 0;
-		double negative = 0;
-		for(int i = 0; i < p.y_values.length; i++){
-			if(p.y_values[i] > 0){
-				positive++;
-			} else {
-				negative++;
-			}
-		}
 		PrintWriter writer = new PrintWriter("testGain.txt", "UTF-8");
-		double baseEntropy = calcEntropy(positive,negative);
 		
-		System.out.println("Base Entropy H(S) = " + baseEntropy);
+		double baseEntropy = getEntropy(p);
 		
 		//loop to test each feature
 		for(int i = 0;i < p.x_values[0].length;i++){
-			if(usedAttr.contains(i+1)){
-				continue;
-			}
+
 			//loop to test each example
 			for(int j = 0; j < p.x_values.length;j++){
 				if(p.x_values[j][i] == 1)
@@ -69,14 +68,9 @@ public class DecisionTree {
 			}
 			
 			
-			//ent[i] = calcEntropy(count[i][0],count[i][1]);
-			
-			//gain equation is correct, need to change to summation of remaining attr
-			//H(S) - (p1 H(S1) + p2 H(S2))
-			
 			//For each possible choice for the attribute
 			for(int k = 0; k < LARGEST_ATTRIBUTE; k ++){
-				if(count[i][k] == 0 ){ //This is not a valid option, thus a binary attribute probably
+				if(count[i][k] == 0 ){ //This is not a valid option, either a binary property or it has already been assigned
 					continue;
 				}
 				
@@ -89,8 +83,8 @@ public class DecisionTree {
 				double p1 = trueCount/p.x_values.length;
 				double p2 = falseCount/p.x_values.length;
 				
-				positive = 0;
-				negative = 0;
+				double positive = 0;
+				double negative = 0;
 				double otherPositive = 0; //For attributes != k
 				double otherNegative = 0;
 				for(int l = 0; l < p.x_values.length;l++){
@@ -112,21 +106,17 @@ public class DecisionTree {
 				double hs1 = calcEntropy(positive,negative);
 				double hs2 = calcEntropy(otherPositive, otherNegative);
 				
+						//H(S) - (p1 H(S1) + p2 H(S2))
 				gain =  baseEntropy - (p1*hs1 + p2*hs2 );
+				//i is from 0 to 5, we want 1 to 6
 				writer.println("Gain for test x" + (i+1) + ": " + gain + " with value: " + (k+1));
 				if (gain > bestGain){
 					bestGain = gain;
-					bestAttr = i+1;
+					bestAttr = i+1;  //i is from 0..5, we want actual value 1..6
 					bestValue = k+1; //k is from 0..2, we want actual value 1..3
 				}
 				
 			}
-			
-			//gain = ent[i] - ((count[i][0] + count[i][1]) / p.x_values[0].length) * calcEntropy(count[i][0], count[i][1]);
-			//if (gain > bestGain){
-			//	bestGain = gain;
-			//	bestAttr = i;
-			//}
 		
 		}
 		writer.close();
@@ -138,29 +128,58 @@ public class DecisionTree {
 	}
 	
 	public Node expandTree(MatrixPac p) throws FileNotFoundException, UnsupportedEncodingException{
-		Node n = new Node(chooseRoot(p, usedAttr));
-		usedAttr.add(n.attr);
-		split(p, n.attr, n.value);
-		n.children[0] = expandTree(posBranch);
-		n.children[1] = expandTree(negBranch);
-		//need to add stopping condition
-		//if(n.gain == 0 || n.gain < 0.000
+		Node n = new Node(chooseRoot(p));
+		SplitReturn splitR = split(p, n.attr, n.value); //Split the values into True and False groups
+		
+		if(getEntropy(splitR.positiveBranch) != 0){ //Still some uncertainty, create True branch node
+			n.children[0] = expandTree(splitR.positiveBranch);
+			
+		} else { //Create leaf node to represent the y value if 100% certain
+			double yClass = splitR.positiveBranch.y_values[0];
+			n.children[0] = new Node(yClass);
+			n.children[0].isLeaf = true;
+		}
+		
+		if(getEntropy(splitR.negativeBranch) != 0){ //Still some uncertainty, create False branch node
+			n.children[1] = expandTree(splitR.negativeBranch);
+			
+		} else { //Create leaf node to represent the y value if 100% certain
+			double yClass = splitR.negativeBranch.y_values[0];
+			n.children[1] = new Node(yClass);
+			n.children[1].isLeaf = true;
+		}
+
 		return n;
 		
+	}
+	
+	//Calculates the given entropy of a set of y values
+	public double getEntropy(MatrixPac p){
+		double positive = 0;
+		double negative = 0;
+		for(int i = 0; i < p.y_values.length; i++){
+			if(p.y_values[i] > 0){
+				positive++;
+			} else {
+				negative++;
+			}
+		}
+		
+		return calcEntropy(positive,negative);
+
 	}
 	
 	//Builds DT starting with the root node
 	public void growTree(MatrixPac p) throws FileNotFoundException, UnsupportedEncodingException{
 		root = expandTree(p);
-		
 	}
 	
 	//Splits the MatrixPac into two branches, positive and negative
-	public void split(MatrixPac p, int attr, int val){
+	public SplitReturn split(MatrixPac p, int attr, int val){
 		List<Integer> posRows = new ArrayList<Integer>();
 		List<Integer> negRows = new ArrayList<Integer>();
-		posBranch = new MatrixPac();
-		negBranch = new MatrixPac();
+		MatrixPac posBranch = new MatrixPac();
+		MatrixPac negBranch = new MatrixPac();
 
 		
 		for(int j = 0; j < p.x_values.length;j++){
@@ -190,20 +209,10 @@ public class DecisionTree {
 			System.arraycopy(p.x_values[negRows.get(i)], 0 , negBranch.x_values[i], 0, p.x_values[0].length);
 			negBranch.y_values[i] = p.y_values[negRows.get(i)];
 		}
+		
+		return new SplitReturn(posBranch,negBranch);
 	}
 	
-	
-	/*
-	public static double calcEntropy(double a, double b){
-		double entropy = 0.0;
-		
-		if (a == 0 || b == 0)
-			return entropy;
-		else
-			entropy = -1.0 * ( ((a/(a+b)) * log2(a/(a+b))) + ( (b/(a+b)) * log2(b/(a+b)))) / log2(2);
-		
-		return entropy;
-	}*/
 	
 	public static double calcEntropy(double a, double b){
 		double entropy = 0.0;
@@ -225,5 +234,34 @@ public class DecisionTree {
 	
 	static double log2(double x){
 		return (Math.log(x) / Math.log(2.));
+	}
+	
+	public double dataError(MatrixPac p){
+		double wrong = 0.0;
+		for(int i = 0; i < p.x_values.length; i++){
+			double testResult = getDecision(root,p.x_values[i]);
+			if(testResult != p.y_values[i]){
+				wrong++;
+			}
+		}
+		return (double)wrong/(double)p.x_values.length;
+	}
+	
+	public double getDecision(Node node, double[] x_value){
+		
+		if(node == null){
+			System.out.println("ERROR, no node found");
+			return 0;
+		}
+		
+		if(node.isLeaf){
+			return node.yClass;
+		} else {
+			if(x_value[node.attr-1] == node.value){
+				return getDecision(node.children[0], x_value); //Send down true path
+			} else {
+				return getDecision(node.children[1], x_value); //Send down false path
+			}
+		}
 	}
 }
