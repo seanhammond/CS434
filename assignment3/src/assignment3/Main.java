@@ -23,8 +23,9 @@ public class Main {
 		Path pathTestD = Paths.get(System.getProperty("user.dir")+ "/src/monks-1-test.csv"); // Get path
 		
 		KNN knn = new KNN();
+		DecisionTree stump = new DecisionTree();
 		DecisionTree dt = new DecisionTree();
-		
+		PrintWriter writer = new PrintWriter("PartTwoErrors.txt", "UTF-8");
 		
 		
 		try {
@@ -58,13 +59,17 @@ public class Main {
 			//Decision Tree
 
 			//List<Integer> attrs = new ArrayList<Integer>(6);
-			//dt.chooseRoot(trainingDData, attrs);
+			//stump.chooseRoot(trainingDData, attrs);
+			//writer.println("Stump Training Error: " + stump.dataError(trainingDData));
+			//writer.println("Stump Testing Error: " + stump.dataError(testingDData));
+			
 			dt.growTree(trainingDData);
-			System.out.println("Training Error: " + dt.dataError(trainingDData));
-			System.out.println("Testing Error: " + dt.dataError(testingDData));
+			writer.println("Tree Training Error: " + dt.dataError(trainingDData));
+			writer.println("Tree Testing Error: " + dt.dataError(testingDData));
 			
 			dt.printTree(dt.root, 0);
 			
+			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
