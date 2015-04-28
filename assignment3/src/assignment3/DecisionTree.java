@@ -14,10 +14,11 @@ public class DecisionTree {
 	List<Integer> usedAttr = new ArrayList<Integer>();
 	
 	public class Node {
-		public Node(int[] i) {
+		public Node(int[] i, double j) {
 			this.attr = i[0];
 			this.value = i[1];
 			this.children = new Node[2];
+			this.theGain = j;
 		}
 		public Node(double yClass){
 			this.yClass = yClass;
@@ -26,6 +27,7 @@ public class DecisionTree {
 		boolean isLeaf = false; //used for when selecting root
 		int attr; 
 		int value;
+		double theGain;
 		Node[] children;
 		
 	}
@@ -41,7 +43,7 @@ public class DecisionTree {
 	}
 	
 	//takes set of training examples
-	public int[] chooseRoot(MatrixPac p) throws FileNotFoundException, UnsupportedEncodingException{
+	public Node chooseRoot(MatrixPac p) throws FileNotFoundException, UnsupportedEncodingException{
 		int bestAttr = -1;
 		int bestValue = 1;
 		double bestGain = -1;
@@ -122,13 +124,15 @@ public class DecisionTree {
 		writer.close();
 		System.out.println("Best attribute: x" + bestAttr + " with value: " + bestValue + " with information gain: " + bestGain);
 		int[] best = new int[2];
+		
 		best[0] = bestAttr;
 		best[1] = bestValue;
-		return best;
+		Node best2 = new Node(best, bestGain);
+		return best2;
 	}
 	
 	public Node expandTree(MatrixPac p) throws FileNotFoundException, UnsupportedEncodingException{
-		Node n = new Node(chooseRoot(p));
+		Node n = (chooseRoot(p));
 		SplitReturn splitR = split(p, n.attr, n.value); //Split the values into True and False groups
 		
 		if(getEntropy(splitR.positiveBranch) != 0){ //Still some uncertainty, create True branch node
