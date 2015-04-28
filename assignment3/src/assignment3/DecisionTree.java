@@ -50,7 +50,7 @@ public class DecisionTree {
 		double[][] count = new double[p.x_values[0].length][LARGEST_ATTRIBUTE]; //[number of attr][3]
 		double gain = 0;
 		
-		PrintWriter writer = new PrintWriter("testGain.txt", "UTF-8");
+		//PrintWriter writer = new PrintWriter("testGain.txt", "UTF-8");
 		
 		double baseEntropy = getEntropy(p);
 		
@@ -111,7 +111,7 @@ public class DecisionTree {
 						//H(S) - (p1 H(S1) + p2 H(S2))
 				gain =  baseEntropy - (p1*hs1 + p2*hs2 );
 				//i is from 0 to 5, we want 1 to 6
-				writer.println("Gain for test x" + (i+1) + ": " + gain + " with value: " + (k+1));
+				//writer.println("Gain for test x" + (i+1) + ": " + gain + " with value: " + (k+1));
 				if (gain > bestGain){
 					bestGain = gain;
 					bestAttr = i+1;  //i is from 0..5, we want actual value 1..6
@@ -121,8 +121,8 @@ public class DecisionTree {
 			}
 		
 		}
-		writer.close();
-		System.out.println("Best attribute: x" + bestAttr + " with value: " + bestValue + " with information gain: " + bestGain);
+		//writer.close();
+		//System.out.println("Best attribute: x" + bestAttr + " with value: " + bestValue + " with information gain: " + bestGain);
 		int[] best = new int[2];
 		
 		best[0] = bestAttr;
@@ -176,6 +176,35 @@ public class DecisionTree {
 	//Builds DT starting with the root node
 	public void growTree(MatrixPac p) throws FileNotFoundException, UnsupportedEncodingException{
 		root = expandTree(p);
+	}
+	
+	public void growStump(MatrixPac p)  throws FileNotFoundException, UnsupportedEncodingException{
+		root = (chooseRoot(p));
+		SplitReturn splitR = split(p, root.attr, root.value);
+		
+		root.children[0] = new Node(majorityY(splitR.positiveBranch));
+		root.children[0].isLeaf = true;
+		
+		root.children[1] = new Node(majorityY(splitR.negativeBranch));
+		root.children[1].isLeaf = true;
+	}
+	
+	public double majorityY(MatrixPac p){
+		int y0 = 0;
+		int y1 = 0;
+		for(int i = 0; i < p.y_values.length; i++){
+			if(p.y_values[i] == 0){
+				y0++;
+			} else {
+				y1++;
+			}
+		}
+		
+		if(y0 > y1){
+			return 0;
+		} else {
+			return 1.0;
+		}
 	}
 	
 	//Splits the MatrixPac into two branches, positive and negative

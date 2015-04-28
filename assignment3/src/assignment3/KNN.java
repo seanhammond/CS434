@@ -52,7 +52,7 @@ public class KNN {
 			
 			errors.add(new ErrorK(k,error));
 		}
-		PrintWriter writer = new PrintWriter("allErrors.tsv", "UTF-8");
+		PrintWriter writer = new PrintWriter("ValidationErrors.tsv", "UTF-8");
 		ErrorK bestK = errors.get(0);
 		writer.println("K\tError");
 		for(ErrorK error : errors){

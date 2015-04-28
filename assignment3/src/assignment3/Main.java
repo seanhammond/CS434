@@ -34,12 +34,12 @@ public class Main {
 			
 			MatrixPac trainingDData = parseCSVD(pathTrainD.toString());
 			MatrixPac testingDData = parseCSVD(pathTestD.toString());
-			/*
+			
 			// KNN
 			int bestK = knn.determineBestK(trainingData);
 			
-			System.out.println("Best K value: " + bestK);
-			PrintWriter writer = new PrintWriter("errorAnalysis.tsv", "UTF-8");
+			
+			writer = new PrintWriter("errorAnalysis.tsv", "UTF-8");
 			writer.println("K\tValidationError\tTrain Error\tTest Error");
 			for(int k = 1; k <= 205; k+=2){
 				
@@ -52,22 +52,31 @@ public class Main {
 				System.out.println("Test Error: " + knn.getError(trainingData, testingData));
 				writer.println(k + "\t" + knn.getValidationError(trainingData) + "\t" + knn.getError(trainingData, trainingData) + "\t" + knn.getError(trainingData, testingData));
 			}
+			
+			System.out.println("\nBest K value: " + bestK);
+			
 			writer.close();
 			
-			*/
+			
 			
 			//Decision Tree
-
-			//List<Integer> attrs = new ArrayList<Integer>(6);
-			//stump.chooseRoot(trainingDData, attrs);
-			//writer.println("Stump Training Error: " + stump.dataError(trainingDData));
-			//writer.println("Stump Testing Error: " + stump.dataError(testingDData));
+			stump.growStump(trainingDData);
+			System.out.println("\nStump:");
+			stump.printTree(stump.root, 0);
+			
+			writer.println("Stump Training Error: " + stump.dataError(trainingDData));
+			writer.println("Stump Testing Error: " + stump.dataError(testingDData));
+			
 			
 			dt.growTree(trainingDData);
 			writer.println("Tree Training Error: " + dt.dataError(trainingDData));
 			writer.println("Tree Testing Error: " + dt.dataError(testingDData));
 			
+			
+			System.out.println("\nDecision Tree:");
 			dt.printTree(dt.root, 0);
+			
+			
 			
 			writer.close();
 		} catch (IOException e) {
