@@ -16,25 +16,25 @@ public class Main {
 	
 	public static void main(String args[]) throws FileNotFoundException, UnsupportedEncodingException{
 		
-		//Path pathTrain = Paths.get(System.getProperty("user.dir")+ "/src/knn_train.csv"); // Get path
-		//Path pathTest = Paths.get(System.getProperty("user.dir")+ "/src/knn_test.csv"); // Get path
+		Path pathTrain = Paths.get(System.getProperty("user.dir")+ "/src/knn_train.csv"); // Get path
+		Path pathTest = Paths.get(System.getProperty("user.dir")+ "/src/knn_test.csv"); // Get path
 		
 		Path pathTrainD = Paths.get(System.getProperty("user.dir")+ "/src/monks-1-train.csv"); // Get path
 		Path pathTestD = Paths.get(System.getProperty("user.dir")+ "/src/monks-1-test.csv"); // Get path
 		
-		//KNN knn = new KNN();
+		KNN knn = new KNN();
 		DecisionTree dt = new DecisionTree();
 		
 		
 		
 		try {
-			//MatrixPac trainingData = parseCSVKNN(pathTrain.toString());
-			//MatrixPac testingData = parseCSVKNN(pathTest.toString());
+			MatrixPac trainingData = parseCSVKNN(pathTrain.toString());
+			MatrixPac testingData = parseCSVKNN(pathTest.toString());
 			
 			MatrixPac trainingDData = parseCSVD(pathTrainD.toString());
 			MatrixPac testingDData = parseCSVD(pathTestD.toString());
-
-			/* KNN
+			/*
+			// KNN
 			int bestK = knn.determineBestK(trainingData);
 			
 			System.out.println("Best K value: " + bestK);
@@ -62,6 +62,8 @@ public class Main {
 			dt.growTree(trainingDData);
 			System.out.println("Training Error: " + dt.dataError(trainingDData));
 			System.out.println("Testing Error: " + dt.dataError(testingDData));
+			
+			dt.printTree(dt.root, 0);
 			
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -268,4 +268,26 @@ public class DecisionTree {
 			}
 		}
 	}
+	
+	public void printTree(Node node, double depth){
+		for(int i = 0; i < depth; i++){
+			System.out.print("|  ");
+		}
+		if(node.isLeaf){
+			
+			System.out.println("y = " + node.yClass);
+			
+		} else {
+			
+			System.out.println("x"+node.attr + " = " + node.value + ": gain " + node.theGain);
+			printTree(node.children[0],depth+1);
+			
+			for(int i = 0; i < depth; i++){
+				System.out.print("|  ");
+			}
+			System.out.println("x"+node.attr + " != " + node.value);
+			printTree(node.children[1],depth+1);
+			
+		}
+	}
 }
