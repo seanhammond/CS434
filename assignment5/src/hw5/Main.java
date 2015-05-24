@@ -28,10 +28,15 @@ public class Main {
 			
 			//Parse data files
 			training.parseCSV_void(pathTrain.toString());
-			double size = training.x_values.length;
+			int size = training.x_values.length;
+			double thing = training.x_values[1399][0];
+			double thing2 = training.x_values[1399][6];
+			System.out.printf("number of lines %d\n", size);
+			System.out.printf("value at x_values[1399][0] = %f\n", thing);
+			System.out.printf("value at x_values[1399][0] = %f\n", thing2);
 			Kmeans tryOne = new Kmeans(training.x_values, 2);
 			tryOne.printCluster();
-			//System.out.printf("number of lines %f\n", size);
+			
 			//K values of 2, 4, 6 and 8
 			/*
 			for(int i = 2; i <= 8; i+=2){	
