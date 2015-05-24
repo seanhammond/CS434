@@ -1,10 +1,14 @@
 package hw5;
 
+import java.io.PrintWriter;
 import java.util.Random;
 import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
 
+@SuppressWarnings("unused")
 public class Kmeans {
 	public double [][] data;
 	public int k;
@@ -28,11 +32,13 @@ public class Kmeans {
 			int point = rand.nextInt(1400);
 			//random xi's 
 			//calculate their center
-			System.out.printf("random points are %d\n", point);
+			//System.out.printf("random points are %d\n", point);
 			startingCentroid(point, i);
 		}
 		
 		while(this.convergence == false){
+			int z = 0;
+			System.out.printf("loop %d\n", z);
 			//assign to cluster
 			assignCluster();
 		
@@ -52,29 +58,36 @@ public class Kmeans {
 			if(sameness==this.k){
 				this.convergence = true;
 			}
+			z++;
 		}
 	}
 	
-	public void printCluster(){
-		
+	public void printCluster()  throws Exception, FileNotFoundException, UnsupportedEncodingException{
+		PrintWriter writer = new PrintWriter("kmeans.txt", "UTF-8");
+		PrintWriter writer2 = new PrintWriter("kmeans.tsv", "UTF-8");
 		for(int n = 0; n < this.clusters.length; n++){
 			Iterator<Integer> iterator = this.clusters[n].iterator();
 			while(iterator.hasNext()){	
 			//for(int j=0; j < this.clusters[n].size(); j++){
 				int instance = iterator.next();
 				//int instance = this.clusters[n].get(j);
-				System.out.printf("Instance %d -> Cluster %d\n", instance, n);
-			}
-			
-					
+				writer.printf("Instance %d\tCluster %d\n", instance, n);
+				writer2.printf("%d\tCluster %d\n", instance, n);
+			}				
 		}
+		writer.close();
+		writer2.close();
 	}
 	
 	private void assignCluster(){
-		
+		//clear clusters from before to reassign
+		//otherwise will have to remove points by checking if they are already in a cluster.
+		for(int i = 0; i < this.k; i++){
+			this.clusters[i].clear();
+		}
 		for(int s=0; s < this.data.length; s++){
 			double temp = tempCentroid(s);
-			double best = 10000;
+			double best = 1000000;
 			int clusterNum = this.k+1;
 			for(int m = 0; m < this.k; m++){
 				double dif = Math.abs(this.centroids[m] - temp);
@@ -94,7 +107,7 @@ public class Kmeans {
 		for(Integer ind : p){
 			for(int b = 0; b < this.data[0].length; b++){
 				int index = (Integer) ind;
-				System.out.printf("index b = %d\n", index);
+				//System.out.printf("index b = %d\n", index);
 				c += this.data[index][b];
 			}
 		}
