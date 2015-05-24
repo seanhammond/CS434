@@ -34,7 +34,7 @@ public class Main {
 			System.out.printf("number of lines %d\n", size);
 			System.out.printf("value at x_values[1399][0] = %f\n", thing);
 			System.out.printf("value at x_values[1399][0] = %f\n", thing2);
-			Kmeans tryOne = new Kmeans(training.x_values, 2);
+			Kmeans tryOne = new Kmeans(training.x_values, 4);
 			tryOne.printCluster();
 			
 			//K values of 2, 4, 6 and 8
