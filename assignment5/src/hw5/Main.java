@@ -35,12 +35,12 @@ public class Main {
 			System.out.printf("value at x_values[1399][0] = %f\n", thing);
 			System.out.printf("value at x_values[1399][0] = %f\n", thing2);
 			Kmeans tryOne = new Kmeans(training.x_values, 2);
-			tryOne.printCluster();
 			
 			//K values of 2, 4, 6 and 8
-			/*
+			
 			for(int i = 2; i <= 8; i+=2){	
 				Kmeans cluster = new Kmeans(training.x_values, i);
+				printCluster(cluster);
 			}
 			/*for(int i = 0; i < 2; i++){
 				for(int j = 0; j < (training.x_values.length) - 1; j++){
@@ -53,6 +53,30 @@ public class Main {
 		}catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+	}
+	
+	
+	public static void printCluster(Kmeans kmeans) throws Exception, FileNotFoundException,
+			UnsupportedEncodingException {
+		PrintWriter writer = new PrintWriter("kmeans"+kmeans.clusters.size()+".txt", "UTF-8");
+		PrintWriter writer2 = new PrintWriter("kmeans.tsv", "UTF-8");
+		for (int n = 0; n < kmeans.clusters.size(); n++) {
+			
+			writer.printf("Cluster %d has %d instances\n", n, kmeans.clusters.get(n).size());
+			
+			/*
+			Iterator<Integer> iterator = this.clusters.get(n).iterator();
+			while (iterator.hasNext()) {
+				// for(int j=0; j < this.clusters[n].size(); j++){
+				int instance = iterator.next();
+				// int instance = this.clusters[n].get(j);
+				writer.printf("Instance %d\tCluster %d\n", instance, n);
+				writer2.printf("%d\tCluster %d\n", instance, n);
+			}*/
+		}
+		writer.close();
+		writer2.close();
 	}
 
 }

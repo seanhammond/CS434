@@ -1,137 +1,131 @@
 package hw5;
 
-import java.io.PrintWriter;
-import java.util.Random;
-import java.util.HashSet;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Random;
+import java.util.Set;
 
-@SuppressWarnings("unused")
 public class Kmeans {
-	public double [][] data;
+	public double[][] data;
 	public int k;
-	public double [] centroids;
-	public java.util.Set<Integer>[] clusters;
+	public double[][] centroids;
+	public ArrayList<ArrayList<ArrayList<Double>>> clusters;
 	public Boolean convergence;
-	
+
 	@SuppressWarnings("unchecked")
-	public Kmeans(double [][] source, int num){
+	public Kmeans(double[][] source, int num) {
 		this.data = source;
 		this.k = num;
-		this.centroids = new double[this.k];
+		this.centroids = new double[this.k][this.data[0].length];
 		this.convergence = false;
-		 java.util.Set<Integer>[] arr = new java.util.HashSet[this.k];
-		 for(int m = 0; m < this.k; m++){
-			  arr[m] = new java.util.HashSet<Integer>();		 
-		  }
-		this.clusters = arr;
+		this.clusters = new ArrayList<ArrayList<ArrayList<Double>>>(this.k);
+		
 		Random rand = new Random();
-		for(int i = 0; i < this.k; i++){
-			int point = rand.nextInt(1400);
-			//random xi's 
-			//calculate their center
-			//System.out.printf("random points are %d\n", point);
+		for (int i = 0; i < this.k; i++) {
+			int point = rand.nextInt(this.data.length);
+			// random xi's
+			// calculate their center
+			// System.out.printf("random points are %d\n", point);
 			startingCentroid(point, i);
 		}
-		
-		while(this.convergence == false){
+
+		while (this.convergence == false) {
 			int z = 0;
 			System.out.printf("loop %d\n", z);
-			//assign to cluster
+			// assign to cluster
 			assignCluster();
-		
-			//save current centers 
-			double currentCenters[] = this.centroids;
-			//calculate new centers
-			for(int n = 0; n < this.k; n++){
-				clusterCentroid(this.clusters[n], n);
+
+			// save current centers
+			double currentCenters[][] = this.centroids;
+			// calculate new centers
+			for (int n = 0; n < this.k; n++) {
+				clusterCentroid(this.clusters.get(n), n);
 			}
-			//check if centers have changed, meaning no moving of points.
+			// check if centers have changed, meaning no moving of points.
 			int sameness = 0;
-			for(int n = 0; n < this.k; n++){
-				if(currentCenters[n] == this.centroids[n]){
-				sameness++;
+			for (int n = 0; n < this.k; n++) {
+				if (currentCenters[n] == this.centroids[n]) {
+					sameness++;
+				}
 			}
-			}
-			if(sameness==this.k){
+			if (sameness == this.k) {
 				this.convergence = true;
 			}
 			z++;
 		}
 	}
-	
-	public void printCluster()  throws Exception, FileNotFoundException, UnsupportedEncodingException{
-		PrintWriter writer = new PrintWriter("kmeans.txt", "UTF-8");
-		PrintWriter writer2 = new PrintWriter("kmeans.tsv", "UTF-8");
-		for(int n = 0; n < this.clusters.length; n++){
-			Iterator<Integer> iterator = this.clusters[n].iterator();
-			while(iterator.hasNext()){	
-			//for(int j=0; j < this.clusters[n].size(); j++){
-				int instance = iterator.next();
-				//int instance = this.clusters[n].get(j);
-				writer.printf("Instance %d\tCluster %d\n", instance, n);
-				writer2.printf("%d\tCluster %d\n", instance, n);
-			}				
-		}
-		writer.close();
-		writer2.close();
-	}
-	
-	private void assignCluster(){
-		//clear clusters from before to reassign
-		//otherwise will have to remove points by checking if they are already in a cluster.
+
+
+	private void assignCluster() {
+		// clear clusters from before to reassign
+		// otherwise will have to remove points by checking if they are already
+		// in a cluster.
+		this.clusters = new ArrayList<ArrayList<ArrayList<Double>>>(this.k);
 		for(int i = 0; i < this.k; i++){
-			this.clusters[i].clear();
+			this.clusters.add(new ArrayList<ArrayList<Double>>());
+		
 		}
-		for(int s=0; s < this.data.length; s++){
-			double temp = tempCentroid(s);
-			double best = 1000000;
-			int clusterNum = this.k+1;
-			for(int m = 0; m < this.k; m++){
-				double dif = Math.abs(this.centroids[m] - temp);
-				if(dif < best){
+		
+		for (int p = 0; p < this.data.length; p++) {
+			double best = distance(this.centroids[0],this.data[p]);
+			int clusterNum = 0;
+			for (int m = 1; m < this.k; m++) {
+				double dif = distance(this.centroids[m],this.data[p]);
+				if (dif < best) {
 					best = dif;
 					clusterNum = m;
 				}
 			}
-			this.clusters[clusterNum].add(s);
+			
+			this.clusters.get(clusterNum).add(pointToList(this.data[p]));
+		}
+
+	}
+	
+	private ArrayList<Double> pointToList(double[] point){
+		ArrayList<Double> list = new ArrayList<Double>();
+		
+		for(int i = 0; i < point.length; i++){
+			list.add(new Double(point[i]));
 		}
 		
+		return list;
 	}
 	
-	//update centers for clusters
-	private void clusterCentroid(java.util.Set<Integer> p, int clustNum){
-		double c=0;
-		for(Integer ind : p){
-			for(int b = 0; b < this.data[0].length; b++){
-				int index = (Integer) ind;
-				//System.out.printf("index b = %d\n", index);
-				c += this.data[index][b];
+	private double distance(double[] mu, double[] x){
+		double dist = 0;
+		
+		for(int i = 0; i < mu.length; i++){
+			dist += Math.pow(mu[i]-x[i], 2);
+		}
+		
+		return Math.sqrt(dist);
+		
+	}
+
+	// update centers for clusters
+	private void clusterCentroid(ArrayList<ArrayList<Double>> p, int clustNum) {
+		double[] sum = new double[this.data[0].length];
+		for(ArrayList<Double> point : p){
+			for(int i = 0; i < point.size(); i++){
+				sum[i] += point.get(i).doubleValue();
 			}
 		}
-		c = c/this.k;
-		this.centroids[clustNum] = c;
-	}
-	
-	//calculate center for beginning random "instances"
-	private void startingCentroid(int p, int clusterNum){
-			double c=0;
-			for(int j=0; j < this.data[0].length; j++){
-				c += this.data[p][j];
-			}
-			c = c/this.k;
-			this.centroids[clusterNum] = c;
+		
+		for(int i = 0; i < sum.length; i++){
+			sum[i] /= (float)p.size();
 		}
-	
-	//calculate center for "instances" when determining cluster
-	private double tempCentroid(int p){
-		double c=0;
-		for(int j=0; j < this.data[0].length; j++){
-			 c += this.data[p][j];
-		}
-		c = c/this.k;
-		return c;
+		
+		this.centroids[clustNum] = sum;
 	}
+
+	// calculate center for beginning random "instances"
+	private void startingCentroid(int p, int clusterNum) {
+		this.centroids[clusterNum] = this.data[p];
+	}
+
 }
