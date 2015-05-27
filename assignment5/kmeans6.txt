@@ -1,6 +1,6 @@
-Cluster 0 has 248 instances
-Cluster 1 has 252 instances
-Cluster 2 has 113 instances
-Cluster 3 has 189 instances
-Cluster 4 has 304 instances
-Cluster 5 has 294 instances
+Cluster 0 has 569 instances
+Cluster 1 has 313 instances
+Cluster 2 has 518 instances
+Cluster 3 has 0 instances
+Cluster 4 has 0 instances
+Cluster 5 has 0 instances

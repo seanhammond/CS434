@@ -28,6 +28,7 @@ public class Main {
 			
 			//Parse data files
 			training.parseCSV_void(pathTrain.toString());
+			
 			int size = training.x_values.length;
 			double thing = training.x_values[1399][0];
 			double thing2 = training.x_values[1399][6];
@@ -39,8 +40,24 @@ public class Main {
 			//K values of 2, 4, 6 and 8
 			
 			for(int i = 2; i <= 8; i+=2){	
-				Kmeans cluster = new Kmeans(training.x_values, i);
-				printCluster(cluster);
+				Kmeans bestCluster = new Kmeans(training.x_values, i);
+				bestCluster.compute();
+				double bestSSE = bestCluster.clusterSSE();
+				
+				for(int j = 0; j < 100; j++){
+					Kmeans cluster = new Kmeans(training.x_values, i);
+					cluster.compute();
+					double clusterSSE = cluster.clusterSSE();
+					if(clusterSSE < bestSSE){
+						bestCluster = cluster;
+						bestSSE = clusterSSE;
+					}
+				}
+				
+				
+				
+				printCluster(bestCluster);
+				printConfusionMatrix(i,bestCluster.confusionMatrix(training.y_values));
 			}
 			/*for(int i = 0; i < 2; i++){
 				for(int j = 0; j < (training.x_values.length) - 1; j++){
@@ -52,6 +69,15 @@ public class Main {
 			*/
 		}catch (IOException e) {
 			e.printStackTrace();
+		}
+		
+	}
+	
+	public static void printConfusionMatrix(int k, int[][] matrix){
+		System.out.println("k: "+k+"\n----------------------\n");
+		System.out.println("class\t0\t1\n");
+		for(int i = 0; i < matrix.length; i++){
+			System.out.println(i+"\t"+matrix[i][0]+"\t"+matrix[i][1]);
 		}
 		
 	}
