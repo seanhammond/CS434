@@ -30,7 +30,7 @@ public class Main {
 			training.parseCSV_void(pathTrain.toString());
 			
 			//K values of 2, 4, 6 and 8
-			
+			long startTime1 = System.currentTimeMillis();
 			for(int i = 2; i <= 8; i+=2){	
 				Kmeans bestCluster = new Kmeans(training.x_values, i);
 				bestCluster.compute();
@@ -51,9 +51,12 @@ public class Main {
 				printConfusionMatrix(i,bestCluster.confusionMatrix(training.y_values));
 				System.out.println("Purity: " + bestCluster.clusterPurity(training.y_values) + "\n\n");
 			}
+			long endTime1 = System.currentTimeMillis();
+			long elapsedTime1 = endTime1 - startTime1;
 			
 			training.x_values = Kmeans.reducePCAData(training.x_values);
 			//Reduced
+			long startTime2 = System.currentTimeMillis();
 			for(int i = 2; i <= 8; i+=2){	
 				Kmeans bestCluster = new Kmeans(training.x_values, i);
 				bestCluster.compute();
@@ -74,6 +77,11 @@ public class Main {
 				printConfusionMatrix(i,bestCluster.confusionMatrix(training.y_values));
 				System.out.println("Purity: " + bestCluster.clusterPurity(training.y_values) + "\n\n");
 			}
+			long endTime2 = System.currentTimeMillis();
+			long elapsedTime2 = endTime2 - startTime2;
+			
+			System.out.println("Run time of full dataset: " + elapsedTime1);
+			System.out.println("Run time of reduced dataset: " + elapsedTime2);
 			
 		}catch (IOException e) {
 			e.printStackTrace();
