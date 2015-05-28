@@ -3,9 +3,13 @@ package hw5;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 import Jama.Matrix;
 
+@SuppressWarnings("unused")
 public class Kmeans {
 	public double[][] data;
 	public int k;
@@ -250,8 +254,12 @@ public class Kmeans {
 		}
 	}
 	
-	private void printDim(Matrix m){
+	private void printDim(Matrix m)throws Exception, FileNotFoundException, UnsupportedEncodingException{
+		PrintWriter writer = new PrintWriter("kmeans_dim.txt", "UTF-8");
+		writer.println(m.getRowDimension() +"x"+ m.getColumnDimension());
+		writer.close();
 		System.out.println(m.getRowDimension() +"x"+ m.getColumnDimension());
+		
 	}
 	
 	public static double[][] reducePCAData(double[][] data){
