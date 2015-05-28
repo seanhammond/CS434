@@ -44,8 +44,9 @@ public class Main {
 				bestCluster.compute();
 				double bestSSE = bestCluster.clusterSSE();
 				
-				for(int j = 0; j < 100; j++){
+				for(int j = 0; j < 10; j++){
 					Kmeans cluster = new Kmeans(training.x_values, i);
+					
 					cluster.compute();
 					double clusterSSE = cluster.clusterSSE();
 					if(clusterSSE < bestSSE){
@@ -54,19 +55,34 @@ public class Main {
 					}
 				}
 				
+				printCluster(bestCluster);
+				printConfusionMatrix(i,bestCluster.confusionMatrix(training.y_values));
+				System.out.println("Purity: " + bestCluster.clusterPurity(training.y_values) + "\n\n");
+			}
+			
+			training.x_values = Kmeans.reducePCAData(training.x_values);
+			//Reduced
+			for(int i = 2; i <= 8; i+=2){	
+				Kmeans bestCluster = new Kmeans(training.x_values, i);
+				bestCluster.compute();
+				double bestSSE = bestCluster.clusterSSE();
 				
+				for(int j = 0; j < 10; j++){
+					Kmeans cluster = new Kmeans(training.x_values, i);
+					
+					cluster.compute();
+					double clusterSSE = cluster.clusterSSE();
+					if(clusterSSE < bestSSE){
+						bestCluster = cluster;
+						bestSSE = clusterSSE;
+					}
+				}
 				
 				printCluster(bestCluster);
 				printConfusionMatrix(i,bestCluster.confusionMatrix(training.y_values));
+				System.out.println("Purity: " + bestCluster.clusterPurity(training.y_values) + "\n\n");
 			}
-			/*for(int i = 0; i < 2; i++){
-				for(int j = 0; j < (training.x_values.length) - 1; j++){
-					writer.printf("%d in x values is %f\n", i, training.x_values[j][i]);
-					
-				}
-			}
-			writer.close();
-			*/
+			
 		}catch (IOException e) {
 			e.printStackTrace();
 		}

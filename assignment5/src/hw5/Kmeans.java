@@ -1,7 +1,10 @@
 package hw5;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
+
+import Jama.Matrix;
 
 public class Kmeans {
 	public double[][] data;
@@ -82,7 +85,7 @@ public class Kmeans {
 				subPoints[j] = points[j];
 			}
 			
-			point = getIndexOfFarthestPoint(subPoints);//rand.nextInt(data.length);
+			point = rand.nextInt(data.length);
 			points[i] = point;
 			startingCentroid(point, i);
 		}
@@ -201,6 +204,152 @@ public class Kmeans {
 			}
 		}
 		return matrix;
+	}
+	
+	public double clusterPurity(double[] yValues){
+		double totalCorrect = 0;
+		
+		for(int i = 0; i < clusters.size(); i++){
+			int class0 = 0;
+			int class1 = 0;
+			for(Integer pointIndex : clusters.get(i)){
+				if(yValues[pointIndex.intValue()] == 0){
+					class0++;
+				} else {
+					class1++;
+				}
+				
+			}
+			totalCorrect += (class0 > class1) ? class0 : class1;
+		}
+		
+		return (1.0/((float)yValues.length)) * totalCorrect;
+		
+		
+	}
+	
+	public static class Eigen implements Comparable<Eigen>{
+		public double value;
+		public double[] vector;
+		public int featureValue;
+		public Eigen(double value, double[] vector,int featureValue){
+			this.value = value;
+			this.vector = vector;
+			this.featureValue = featureValue;
+		}
+		
+		@Override
+		public int compareTo(Eigen e) {
+			if(e.value > this.value){
+				return 1;
+			}
+			else if(e.value < this.value){
+				return -1;
+			} 
+			return 0;
+		}
+	}
+	
+	private void printDim(Matrix m){
+		System.out.println(m.getRowDimension() +"x"+ m.getColumnDimension());
+	}
+	
+	public static double[][] reducePCAData(double[][] data){
+		double[] center = new double[data[0].length];
+		
+		for(int i = 0; i < data[0].length; i++){
+			center[i] = 0;
+		}
+		for(int i = 0; i < data.length; i++){
+			for(int j = 0; j < data[0].length; j++){
+				center[j] += data[i][j];
+			}
+		}
+		for(int i = 0; i < data[0].length; i++){
+			center[i] /= (float)data.length;
+		}
+		
+		Matrix covarianceMatrix = new Matrix(center.length,center.length);
+		Matrix centerMatrix = new Matrix(center,1);
+		for(int i = 0; i < data.length; i++){
+			Matrix e = (new Matrix(data[i],1)).minus(centerMatrix);
+			Matrix squared = e.transpose().times(e);
+			covarianceMatrix = covarianceMatrix.plus(squared);
+		}
+		covarianceMatrix = covarianceMatrix.times(1.0/((float)data.length));
+		
+		double[] eigenValues = covarianceMatrix.eig().getRealEigenvalues();
+		double[][] eigenVectors = covarianceMatrix.eig().getV().getArray();
+		
+		Eigen[] eigens = new Eigen[eigenValues.length];
+		for(int i = 0; i < eigenValues.length; i++){
+			eigens[i] = new Eigen(eigenValues[i],eigenVectors[i],i);
+		}
+		
+		Arrays.sort(eigens);
+
+		int d = data[0].length;
+		int newD = d;
+		
+		for(int i = d; i > 0; i--){
+			if(infoRetained(eigens,d,newD) > 0.8){
+				newD = i;
+			} else {
+				break;
+			}
+		}
+
+		for(int i = 0; i < (d-newD);i++){
+			data = removeFeature(eigens[i], data);
+		}
+		System.out.println("Removed " + (d-newD) + " dims");
+		System.out.println("DONE!");	
+		return data;
+	}
+	
+	private static ArrayList<ArrayList<Double>> pointsToArrayList(double[][] data){
+		ArrayList<ArrayList<Double>> lists = new ArrayList<ArrayList<Double>>();
+		for(int i = 0; i < data.length; i++){
+			ArrayList<Double> value = new ArrayList<Double>();
+			for(int j = 0; j < data[i].length; j++){
+				value.add(new Double(data[i][j]));
+				
+			}
+			lists.add(value);
+		}
+		return lists;
+	}
+	
+	private static double[][] arrayListToPoints(ArrayList<ArrayList<Double>> lists){
+		double[][] points = new double[lists.size()][lists.get(0).size()];
+		for(int i = 0; i < lists.size(); i++){
+			for(int j = 0; j < lists.get(i).size(); j++){
+				points[i][j] = lists.get(i).get(j).doubleValue();
+			}
+		}
+		return points;
+	}
+	
+	private static double[][] removeFeature(Eigen e, double[][] data){
+		ArrayList<ArrayList<Double>> dataList = pointsToArrayList(data);
+		for(ArrayList<Double> value : dataList){
+			value.remove(e.featureValue);
+		}
+		return arrayListToPoints(dataList);
+	}
+	
+	private static double infoRetained(Eigen[] eigens, int d, int newD){
+		double sumD = 0;
+		double sumNewD = 0;
+		
+		for(int i = 0; i < d; i++){
+			sumD += eigens[i].value;
+		}
+		
+		for(int i = 0; i < newD; i++){
+			sumNewD += eigens[i].value;
+		}
+		return (sumNewD/sumD);
 	}
 
 }
