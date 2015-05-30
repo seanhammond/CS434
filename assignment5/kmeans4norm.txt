@@ -1,0 +1,4 @@
+Cluster 0 has 402 instances
+Cluster 1 has 436 instances
+Cluster 2 has 264 instances
+Cluster 3 has 298 instances

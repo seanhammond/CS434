@@ -32,6 +32,7 @@ public class Main {
 			//K values of 2, 4, 6 and 8
 			long startTime1 = System.currentTimeMillis();
 			for(int i = 2; i <= 8; i+=2){	
+				PrintWriter write = new PrintWriter("kmeans_purity"+i+"PCA.txt", "UTF-8");
 				Kmeans bestCluster = new Kmeans(training.x_values, i);
 				bestCluster.compute();
 				double bestSSE = bestCluster.clusterSSE();
@@ -47,9 +48,11 @@ public class Main {
 					}
 				}
 				
-				printCluster(bestCluster);
-				printConfusionMatrix(i,bestCluster.confusionMatrix(training.y_values));
+				printCluster(bestCluster, "norm");
+				printConfusionMatrix(i,bestCluster.confusionMatrix(training.y_values), "norm");
 				System.out.println("Purity: " + bestCluster.clusterPurity(training.y_values) + "\n\n");
+				write.println("Purity: " + bestCluster.clusterPurity(training.y_values) + "\n\n");
+				write.close();
 			}
 			long endTime1 = System.currentTimeMillis();
 			long elapsedTime1 = endTime1 - startTime1;
@@ -58,6 +61,7 @@ public class Main {
 			//Reduced
 			long startTime2 = System.currentTimeMillis();
 			for(int i = 2; i <= 8; i+=2){	
+				PrintWriter write = new PrintWriter("kmeans_purity"+i+"PCA.txt", "UTF-8");
 				Kmeans bestCluster = new Kmeans(training.x_values, i);
 				bestCluster.compute();
 				double bestSSE = bestCluster.clusterSSE();
@@ -73,9 +77,11 @@ public class Main {
 					}
 				}
 				
-				printCluster(bestCluster);
-				printConfusionMatrix(i,bestCluster.confusionMatrix(training.y_values));
+				printCluster(bestCluster, "PCA");
+				printConfusionMatrix(i,bestCluster.confusionMatrix(training.y_values), "PCA");
 				System.out.println("Purity: " + bestCluster.clusterPurity(training.y_values) + "\n\n");
+				write.println("Purity: " + bestCluster.clusterPurity(training.y_values) + "\n\n");
+				write.close();
 			}
 			long endTime2 = System.currentTimeMillis();
 			long elapsedTime2 = endTime2 - startTime2;
@@ -89,8 +95,8 @@ public class Main {
 		
 	}
 	
-	public static void printConfusionMatrix(int k, int[][] matrix)throws Exception, FileNotFoundException, UnsupportedEncodingException{
-		PrintWriter writer = new PrintWriter("kmeans_printConfusionMatrix"+k+".txt", "UTF-8");
+	public static void printConfusionMatrix(int k, int[][] matrix, String type)throws Exception, FileNotFoundException, UnsupportedEncodingException{
+		PrintWriter writer = new PrintWriter("kmeans_printConfusionMatrix"+k+type+".txt", "UTF-8");
 		System.out.println("k: "+k+"\n----------------------\n");
 		writer.println("k: "+k+"\n----------------------\n");
 		System.out.println("class\t0\t1\n");
@@ -104,9 +110,9 @@ public class Main {
 	}
 	
 	
-	public static void printCluster(Kmeans kmeans) throws Exception, FileNotFoundException,
+	public static void printCluster(Kmeans kmeans, String type) throws Exception, FileNotFoundException,
 			UnsupportedEncodingException {
-		PrintWriter writer = new PrintWriter("kmeans"+kmeans.clusters.size()+".txt", "UTF-8");
+		PrintWriter writer = new PrintWriter("kmeans"+kmeans.clusters.size()+type+".txt", "UTF-8");
 		for (int n = 0; n < kmeans.clusters.size(); n++) {
 			
 			writer.printf("Cluster %d has %d instances\n", n, kmeans.clusters.get(n).size());
