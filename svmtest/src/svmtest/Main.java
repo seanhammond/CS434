@@ -31,13 +31,16 @@ public class Main {
 	public static void main(String args[]) throws Exception, FileNotFoundException, UnsupportedEncodingException{
 		
 		//Create paths for data files
-		Path pathTrain = Paths.get(System.getProperty("user.dir")+ "/src/Day0_30.svm"); // Get path
+		Path pathTrain = Paths.get(System.getProperty("user.dir")+ "/src/Day0_1b.svm"); // Get path
 		
 		SVMLightLoader file1 = new SVMLightLoader();
 		File fp = new File(pathTrain.toString());
 		
 		file1.setFile(fp);
 		Instances data = new Instances(file1.getDataSet());	
+		Instance one = data.instance(0);
+		SparseInstance one_S = new  SparseInstance(one);
+		System.out.println(one_S);
 		//file1.getDataSet();
 	}
 	
