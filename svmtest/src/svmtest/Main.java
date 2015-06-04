@@ -39,6 +39,7 @@ public class Main {
 		file1.setFile(fp);
 		Instances data = new Instances(file1.getDataSet());	
 		Instance one = data.instance(0);
+		System.out.println(one);
 		SparseInstance one_S = new  SparseInstance(one);
 		System.out.println(one_S);
 		//file1.getDataSet();
